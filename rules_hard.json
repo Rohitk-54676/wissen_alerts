@@ -1,17 +1,72 @@
 [
   {
     "id": "r1",
-    "instrument": "INFY",
+    "instrument": "INST01",
     "type": "level",
-    "direction": "below",
-    "level": 1500
+    "direction": "above",
+    "level": 141.17
   },
   {
-    "id": "r2",
-    "instrument": "TCS",
+    "id": "r3",
+    "instrument": "INST01",
+    "type": "level",
+    "direction": "above",
+    "level": 141.02
+  },
+  {
+    "id": "r9",
+    "instrument": "INST03",
     "type": "ma_cross",
     "short": 5,
-    "long": 20,
+    "long": 12,
     "direction": "above"
+  },
+  {
+    "id": "r10",
+    "instrument": "INST03",
+    "type": "ma_cross",
+    "short": 5,
+    "long": 8,
+    "direction": "above"
+  },
+  {
+    "id": "r11",
+    "instrument": "INST03",
+    "type": "ma_cross",
+    "short": 5,
+    "long": 10,
+    "direction": "below"
+  },
+  {
+    "id": "r12",
+    "instrument": "INST04",
+    "type": "ma_cross",
+    "short": 5,
+    "long": 8,
+    "direction": "above"
+  },
+  {
+    "id": "r13",
+    "instrument": "INST04",
+    "type": "ma_cross",
+    "short": 3,
+    "long": 10,
+    "direction": "below"
+  },
+  {
+    "id": "r14",
+    "instrument": "INST04",
+    "type": "ma_cross",
+    "short": 3,
+    "long": 6,
+    "direction": "above"
+  },
+  {
+    "id": "r15",
+    "instrument": "INST04",
+    "type": "ma_cross",
+    "short": 5,
+    "long": 12,
+    "direction": "below"
   }
 ]

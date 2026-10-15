@@ -55,19 +55,35 @@ Sample run:
     $ python alerts.py prices.csv rules.json
     2026-09-03 r1 INFY level below 1500
 
-Harder run - out-of-order dates, MA cross, multiple level recrossings:
+Randomized harder run - fresh dataset each invocation:
 
     $ python make_hard_data.py
-    $ python alerts.py prices_hard.csv rules_hard.json
-    2026-09-04 r1 INFY level below 1500
-    2026-09-09 r1 INFY level below 1500
-    2026-09-22 r2 TCS ma_cross above 5/20
+    seed = 384019275 (run `python make_hard_data.py 384019275` to reproduce)
+    instruments : 5
+    days        : 30
+    rows        : 150  (target 50-200)
+    price range : 54.20 .. 196.88  (target 50-200)
+    rules       : 15
+    expected    : 3 alerts  (target 1-7)
+    wrote prices_hard.csv and rules_hard.json
 
-I hand-checked the TCS alert. On 2026-09-21, MA5 = 3820.0 and
-MA20 = 3822.5 (short below long). On 2026-09-22, MA5 = 3850.0 and
-MA20 = 3820.0 (short above long). The rule fires on 09-22 only. On
-09-23 the short is still above the long but no alert fires, which is
-correct - it is a state, not a crossing.
+    $ python alerts.py prices_hard.csv rules_hard.json
+    2026-02-14 r7 INST03 level below 78.40
+    2026-03-01 r12 INST06 level above 156.55
+    2026-03-18 r19 INST09 ma_cross above 5/7
+
+`make_hard_data.py` is seeded from the system random source by default,
+so every run produces a different dataset. The seed is printed, so any
+specific run can be reproduced by passing it back as an argument. The
+generator targets 50-200 CSV rows, prices in 50-200, and 1-7 alerts,
+and it reports whether each target was met.
+
+I hand-checked a TCS ma_cross in an earlier fixed dataset: on
+2026-09-21 the short MA was below the long MA, on 2026-09-22 it was
+above, and the alert fired on 09-22 only. On 09-23 the short was still
+above the long but no alert fired - it is a state, not a crossing.
+That distinction is what `test_ma_cross_fires_only_on_cross_day`
+encodes.
 
 Unit tests (13) cover: rolling-mean windowing, level cross in both
 directions, first-day non-firing, touch-at-level, MA-not-ready window,
@@ -115,12 +131,12 @@ Prompts in brief:
 - **Warn to stderr on missing instrument or unknown rule type, then
   continue.** One bad rule does not kill the run for all the others.
 - **Debugged the harder dataset by inspecting intermediate values.**
-  My first attempt at `make_hard_data.py` produced no TCS alert.
+  My first attempt at the generator produced no MA-cross alert.
   Instead of changing code, I dumped the MA series and saw the V-shape
-  was too shallow for MA5 to overtake MA20 within 30 days. I
-  regenerated with a sharper V; the cross appeared exactly where I
-  predicted. This is why I trust the tests - I verified the numbers,
-  not just the pass/fail.
+  was too shallow for the short MA to overtake the long MA within the
+  data range. I regenerated with a sharper V; the cross appeared
+  exactly where I predicted. This is why I trust the tests - I
+  verified the numbers, not just the pass/fail.
 
 ## Known limitations
 
@@ -136,5 +152,6 @@ Prompts in brief:
 - `alerts.py` - the tool
 - `test_alerts.py` - 13 unit and end-to-end tests
 - `prices.csv`, `rules.json` - sample inputs
-- `prices_hard.csv`, `rules_hard.json`, `make_hard_data.py` - harder
-  dataset with a golden cross and multiple level recrossings
+- `make_hard_data.py` - random data generator (50-200 rows, prices
+  50-200, 1-7 alerts)
+- `prices_hard.csv`, `rules_hard.json` - last generated harder dataset
